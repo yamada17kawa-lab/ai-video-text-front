@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <div v-if="$route.path === '/'">
+    <div class="top-left-icon" @click="goToChat">
+      <span class="icon-text">AI</span>
+    </div>
     <div class="top-right-icon" @click="showTaskList">
       <span class="tooltip">任务列表</span>
       任
@@ -14,9 +17,17 @@
           accept="video/*"
           style="display: none"
         />
-        <button @click="triggerFileInput" :disabled="uploading">
-          {{ uploading ? '上传中...' : '选择文件' }}
-        </button>
+        <div class="input-group">
+          <input
+            type="text"
+            v-model="fileName"
+            placeholder="请输入名称"
+            class="name-input"
+          />
+          <button @click="triggerFileInput" :disabled="uploading || !hasFileName" class="upload-btn">
+            {{ uploading ? '上传中...' : '选择文件' }}
+          </button>
+        </div>
         <div v-if="selectedFile" class="file-info">
           已选择: {{ selectedFile.name }}
         </div>
@@ -78,10 +89,19 @@ export default {
       error: '',
       showModal: false,
       loadingTasks: false,
-      taskList: []
+      taskList: [],
+      fileName: ''
+    }
+  },
+  computed: {
+    hasFileName() {
+      return this.fileName.trim().length > 0
     }
   },
   methods: {
+    goToChat() {
+      this.$router.push('/chat')
+    },
     triggerFileInput() {
       this.$refs.fileInput.click()
     },
@@ -103,9 +123,10 @@ export default {
 
       const formData = new FormData()
       formData.append('video', this.selectedFile)
+      formData.append('name', this.fileName.trim())
 
       try {
-        const res = await axios.post(`${apiBaseUrl}/toAudio`, formData, {
+        const res = await axios.post(`${apiBaseUrl}/asr/toAudio`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -117,6 +138,7 @@ export default {
         this.uploading = false
         this.selectedFile = null
         this.$refs.fileInput.value = ''
+        this.fileName = ''
       }
     },
     async showTaskList() {
@@ -125,7 +147,7 @@ export default {
       this.taskList = []
       
       try {
-        const res = await axios.get(`${apiBaseUrl}/getPendingAndRunning`)
+        const res = await axios.get(`${apiBaseUrl}/asr/getPendingAndRunning`)
         if (res.data.code === 200 && res.data.data) {
           const data = res.data.data
           this.taskList = Object.keys(data).map(id => ({
@@ -144,7 +166,7 @@ export default {
     },
     async getTaskDetail(taskId) {
       try {
-        const res = await axios.get(`${apiBaseUrl}/getTask/${taskId}`)
+        const res = await axios.get(`${apiBaseUrl}/asr/getTask/${taskId}`)
         this.result = res.data
         this.error = ''
       } catch (err) {
@@ -202,6 +224,36 @@ export default {
   background-color: #e64545;
 }
 
+.top-left-icon {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.top-left-icon:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.top-left-icon .icon-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+}
+
 .upload-container {
   max-width: 600px;
   margin: 50px auto;
@@ -217,15 +269,44 @@ h1 {
   margin: 30px 0;
 }
 
-button {
+.input-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.name-input {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.name-input:focus {
+  border-color: #42b983;
+}
+
+.upload-btn {
   padding: 12px 24px;
   font-size: 16px;
-  background-color: #42b983;
+  background-color: #cccccc;
   color: white;
   border: none;
   border-radius: 4px;
+  cursor: not-allowed;
+  transition: all 0.3s;
+}
+
+.upload-btn:not(:disabled) {
+  background-color: #42b983;
   cursor: pointer;
-  transition: background-color 0.3s;
+}
+
+.upload-btn:not(:disabled):hover {
+  background-color: #3aa876;
 }
 
 button:hover:not(:disabled) {
