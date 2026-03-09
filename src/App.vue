@@ -7,7 +7,14 @@
       <span class="tooltip">任务列表</span>
       任
     </div>
+    <div class="bottom-right-cat-gif">
+      <img src="/src/assets/Cat GIF by 9CatNFT.gif" alt="Cat GIF" />
+    </div>
+    <div class="bottom-right-gif">
+      <img src="/src/assets/Click Jack Russell GIF.gif" alt="Click GIF" />
+    </div>
     <div class="upload-container">
+      <p class="upload-description">上传MP4格式的视频，AI将会根据视频的音频解析学习内容</p>
       <h1>文件上传</h1>
       <div class="upload-box">
         <input
@@ -77,7 +84,7 @@
 <script>
 import axios from 'axios'
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:7432'
 
 export default {
   name: 'App',
@@ -128,7 +135,8 @@ export default {
       try {
         const res = await axios.post(`${apiBaseUrl}/asr/toAudio`, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data',
+            'ngrok-skip-browser-warning': 'true'
           }
         })
         this.result = res.data
@@ -147,7 +155,11 @@ export default {
       this.taskList = []
       
       try {
-        const res = await axios.get(`${apiBaseUrl}/asr/getPendingAndRunning`)
+        const res = await axios.get(`${apiBaseUrl}/asr/getPendingAndRunning`, {
+          headers: {
+            'ngrok-skip-browser-warning': 'true'
+          }
+        })
         if (res.data.code === 200 && res.data.data) {
           const data = res.data.data
           this.taskList = Object.keys(data).map(id => ({
@@ -166,7 +178,11 @@ export default {
     },
     async getTaskDetail(taskId) {
       try {
-        const res = await axios.get(`${apiBaseUrl}/asr/getTask/${taskId}`)
+        const res = await axios.get(`${apiBaseUrl}/asr/getTask/${taskId}`, {
+          headers: {
+            'ngrok-skip-browser-warning': 'true'
+          }
+        })
         this.result = res.data
         this.error = ''
       } catch (err) {
@@ -261,8 +277,16 @@ export default {
   text-align: center;
 }
 
+.upload-description {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
 h1 {
   color: #333;
+  margin-top: 0;
 }
 
 .upload-box {
@@ -495,5 +519,33 @@ button:disabled {
 
 .task-name {
   color: #666;
+}
+
+.bottom-right-cat-gif {
+  position: fixed;
+  bottom: 130px;
+  right: 20px;
+  z-index: 999;
+}
+
+.bottom-right-cat-gif img {
+  width: 100px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.bottom-right-gif {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+}
+
+.bottom-right-gif img {
+  width: 100px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 </style>

@@ -49,6 +49,7 @@ export default {
     goBack() {
       if (this.eventSource) {
         this.eventSource.close()
+        this.eventSource = null
       }
       this.$router.push('/')
     },
@@ -69,7 +70,8 @@ export default {
         content: ''
       })
       
-      const url = `${apiBaseUrl}/ai/ai?question=${encodeURIComponent(message)}`
+      // 添加ngrok跳过参数
+      const url = `${apiBaseUrl}/ai/ai?question=${encodeURIComponent(message)}&ngrok-skip-browser-warning=true`
       this.eventSource = new EventSource(url)
       
       this.eventSource.onmessage = (event) => {
@@ -98,6 +100,7 @@ export default {
   beforeDestroy() {
     if (this.eventSource) {
       this.eventSource.close()
+      this.eventSource = null
     }
   }
 }

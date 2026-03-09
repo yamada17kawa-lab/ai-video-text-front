@@ -19,7 +19,9 @@ export default {
 
 body {
   font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: url('/src/assets/upload.jpg') no-repeat center center fixed;
+  background-size: cover;
   min-height: 100vh;
+  overflow: hidden;
 }
 </style>
