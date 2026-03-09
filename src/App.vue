@@ -10,9 +10,6 @@
     <div class="bottom-right-cat-gif">
       <img src="/src/assets/Cat GIF by 9CatNFT.gif" alt="Cat GIF" />
     </div>
-    <div class="bottom-right-gif">
-      <img src="/src/assets/Click Jack Russell GIF.gif" alt="Click GIF" />
-    </div>
     <div class="upload-container">
       <p class="upload-description">上传MP4格式的视频，AI将会根据视频的音频解析学习内容</p>
       <h1>文件上传</h1>
@@ -523,26 +520,12 @@ button:disabled {
 
 .bottom-right-cat-gif {
   position: fixed;
-  bottom: 130px;
-  right: 20px;
-  z-index: 999;
-}
-
-.bottom-right-cat-gif img {
-  width: 100px;
-  height: auto;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.bottom-right-gif {
-  position: fixed;
   bottom: 20px;
   right: 20px;
   z-index: 999;
 }
 
-.bottom-right-gif img {
+.bottom-right-cat-gif img {
   width: 100px;
   height: auto;
   border-radius: 8px;
